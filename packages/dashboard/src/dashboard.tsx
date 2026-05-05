@@ -5,17 +5,17 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * -2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
 import React from 'react';
-import './dashboard.css';
+import './dacss';
 import { ChevronLeftIcon, ChevronRightIcon, LockIcon, LockOpenIcon, ReloadIcon, ScreenshotRegionIcon } from './icons';
 import { AnnotateModal } from './annotations';
 import { clientToViewport, getImageLayout } from './imageLayout';
@@ -27,7 +27,7 @@ import { useMeasureForRef } from '@web/uiUtils';
 
 import type { DashboardModel } from './dashboardModel';
 
-const BUTTONS = ['left', 'middle', 'right'] as const;
+', 'right'] as const;
 
 async function pickSaveWritable(suggestedName: string, description: string, mime: string, extension: string): Promise<FileSystemWritableFileStream | null> {
   try {
@@ -47,7 +47,7 @@ function smartUrl(input: string): string {
     return value;
   if (/^[a-z][a-z0-9+.-]*:\/\//i.test(value) || value.startsWith('about:') || value.startsWith('data:'))
     return value;
-  const host = value.split(/[/?#]/, 1)[0];
+  
   const hasDot = host.includes('.');
   const isLocalhost = /^localhost(:\d+)?$/i.test(host);
   const hasPort = /:\d+$/.test(host);
@@ -86,64 +86,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ model }) => {
 
   const [viewportRect] = useMeasureForRef(viewportMainRef);
 
-  // Active recording hides the browser chrome so the viewport matches what's
-  // being captured.
-  const showBrowserChrome = recording?.phase !== 'recording';
-
-  const windowStyle = React.useMemo<React.CSSProperties | undefined>(() => {
-    const OUTER_MARGIN = 24;
-    const chromeHeight = showBrowserChrome ? (browserChromeRef.current?.offsetHeight ?? 40) : 0;
-    const availW = viewportRect.width - OUTER_MARGIN;
-    const availH = viewportRect.height - OUTER_MARGIN;
-    if (availW <= 0 || availH <= 0)
-      return undefined;
-    if (aspect === null)
-      return { width: availW, height: availH };
-    const screenH = availH - chromeHeight;
-    let w = availW;
-    let h = w / aspect;
-    if (h > screenH) {
-      h = screenH;
-      w = h * aspect;
-    }
-    return { width: w, height: h + chromeHeight };
-  }, [viewportRect, aspect, showBrowserChrome]);
-
-  React.useEffect(() => {
-    if (flashTick === 0)
-      return;
-    const btn = interactiveBtnRef.current;
-    if (!btn)
-      return;
-    btn.classList.remove('flash');
-    // Force a reflow so that re-adding the class restarts the animation.
-    void btn.offsetWidth;
-    btn.classList.add('flash');
-    const timer = setTimeout(() => btn.classList.remove('flash'), 2000);
-    return () => {
-      clearTimeout(timer);
-      btn.classList.remove('flash');
-    };
-  }, [flashTick]);
-
-  React.useEffect(() => {
-    if (interactive)
-      interactiveBtnRef.current?.classList.remove('flash');
-  }, [interactive]);
-
-  const onSubmitAnnotations = React.useCallback(async (blob: Blob, annotations: Annotation[]) => {
-    const dataUrl = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(blob);
-    });
-    const data = dataUrl.slice(dataUrl.indexOf(',') + 1);
-    await model.submitAnnotation(data, annotations);
-  }, [model]);
-
-  function flashInteractiveHint() {
-    setFlashTick(tick => tick + 1);
+  // Active recording hides the browser chrome so 
   }
 
   const onSaveRecording = React.useCallback(async (blob: Blob) => {
@@ -360,37 +303,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ model }) => {
             <div
               ref={screenRef}
               className='screen'
-              tabIndex={0}
-              style={{ display: liveFrame ? '' : 'none' }}
-              onMouseDown={onScreenMouseDown}
-              onMouseUp={onScreenMouseUp}
-              onMouseMove={onScreenMouseMove}
-              onWheel={onScreenWheel}
-              onKeyDown={onScreenKeyDown}
-              onKeyUp={onScreenKeyUp}
-              onContextMenu={e => e.preventDefault()}
-            >
-              <img
-                ref={displayRef}
-                id='display'
-                className='display'
-                alt='screencast'
-                src={liveFrame ? 'data:image/jpeg;base64,' + liveFrame.data : undefined}
-              />
-            </div>
-            {overlayText && <div className={'screen-overlay' + (liveFrame ? ' has-frame' : '')}><span>{overlayText}</span></div>}
-          </div>
-        </div>
-      </div>
-
-      {showAnnotateModal && annotateFrame && (
-        <AnnotateModal
-          frame={annotateFrame}
-          showSubmit={annotateInitiator === 'cli'}
-          onSubmit={onSubmitAnnotations}
-          onClose={onCloseAnnotate}
-        />
-      )}
+              tabIndex={
 
       {showRecording && recording?.phase === 'stopped' && (
         <Recording
